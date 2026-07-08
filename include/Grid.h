@@ -1,3 +1,5 @@
+#ifndef GRID_H
+#define GRID_H
 #include <vector>
 
 class Grid{
@@ -15,3 +17,4 @@ class Grid{
             grid[x][y]=false;
         }
 };
+#endif

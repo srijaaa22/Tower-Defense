@@ -1,3 +1,5 @@
+#ifndef TOWER_H
+#define TOWER_H
 #include "Vec2.h"
 #include "Entity.h"
 
@@ -11,3 +13,4 @@ class Tower: public Entity{
         virtual void update(float dt){}
         virtual void render(SDL_Renderer* renderer){}
 };
+#endif

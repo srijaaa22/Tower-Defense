@@ -1,3 +1,5 @@
+#ifndef ENTITY_H
+#define ENTITY_H
 #include "Vec2.h"
 #include <SDL2/SDL.h>
 
@@ -11,3 +13,4 @@ class Entity{
         virtual void render(SDL_Renderer* renderer) = 0;
         virtual ~Entity() = default;
 };
+#endif
