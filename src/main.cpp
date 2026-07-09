@@ -4,6 +4,7 @@
 #include "Vec2.h"
 #include "Enemy.h"
 #include "Tower.h"
+#include "Spatialhash.h"
 
 bool overlaps(Entity& a, Entity& b) {
     return a.getPosition().x < b.getPosition().x + b.getSize().x &&
@@ -18,7 +19,7 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
-    SDL_SetWindowTitle(window, "Tower Defense");
+    SDL_SetWindowTitle(window, "Tower-Defense");
 
     SDL_Event event;
     bool running = true;
@@ -29,6 +30,9 @@ int main(int argc, char* argv[]) {
     Uint32 curr = SDL_GetTicks();
     float acc = 0;
     const float ft = 16.67f;
+
+    const int cs = 64;
+    SpatialHash sh(cs);
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -47,8 +51,20 @@ int main(int argc, char* argv[]) {
             // game logic goes here later
             acc -= ft;
             e.update(ft);
+
+            std::vector<Entity*> allEntities;
+            allEntities.push_back(&e);
+
             for(int i=0; i<t_store.size(); i++){
-                if(overlaps(e,t_store[i])) std::cout << "Overlaps";
+                allEntities.push_back(&t_store[i]);
+            }
+
+            sh.rebuild(allEntities);
+
+            std::vector<Entity*> nearby = sh.queryNearby(e.getPosition());
+            for(int i=0; i<nearby.size(); i++){
+                if(nearby[i] == &e) continue;
+                if(overlaps(e, *nearby[i])) std::cout << "Overlaps ";
             }
         }
 

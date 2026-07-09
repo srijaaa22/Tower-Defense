@@ -14,7 +14,7 @@ class Tower: public Entity{
         virtual void update(float dt){}
         virtual void render(SDL_Renderer* renderer){
             SDL_Rect r{position.x, position.y, size.x, size.y};
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+            SDL_SetRenderDrawColor(renderer, 0, 125, 125, 255);
             SDL_RenderFillRect(renderer, &r);
         }
 };
