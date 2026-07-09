@@ -12,5 +12,11 @@ class Entity{
         virtual void update(float dt) = 0;
         virtual void render(SDL_Renderer* renderer) = 0;
         virtual ~Entity() = default;
+        Vec2 getPosition() const { 
+            return position;
+        }
+        Vec2 getSize() const { 
+            return size;
+        }
 };
 #endif
