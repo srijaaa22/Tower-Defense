@@ -16,6 +16,10 @@ struct Vec2 {
         return {x*dt, y*dt};
     }
 
+    bool operator==(const Vec2 &other) const{
+        return x==other.x && y==other.y;
+    }
+
     float length() const{
         float len;
         len = std::sqrt(std::pow(x,2) + std::pow(y,2));

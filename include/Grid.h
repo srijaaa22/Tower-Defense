@@ -9,7 +9,7 @@ class Grid{
         std::vector<std::vector<bool>> grid;
     public:
         Grid(int r, int c): row(r), col(c), grid(r, std::vector<bool>(c,true)){}
-        bool isWalkable(int x, int y){
+        bool isWalkable(int x, int y) const {
             if(grid[x][y]) return true;
             else return false;
         }
