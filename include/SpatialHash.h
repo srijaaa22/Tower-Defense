@@ -1,60 +1,48 @@
 #ifndef SPATIALHASH_H
 #define SPATIALHASH_H
 #include <vector>
-#include <unordered_map>
 #include "Entity.h"
 
-struct CellKey{
-    int x;
-    int y;
-    bool operator==(const CellKey &other) const {
-        return x==other.x && y==other.y;
+class SpatialHash {
+private:
+    int rows;
+    int cols;
+    float cellSize;
+    std::vector<std::vector<Entity*>> cells;
+
+    int toIndex(int x, int y) const {
+        return y * cols + x;
     }
-};
 
-struct CellKeyhash{
-    size_t operator()(const CellKey &k) const {
-        return std::hash<int>()(k.x) ^ (std::hash<int>()(k.y) << 1);
+public:
+    SpatialHash(float cellSize, int rows, int cols)
+        : cellSize(cellSize), rows(rows), cols(cols), cells(rows * cols) {}
+
+    void rebuild(std::vector<Entity*>& entities) {
+        for(auto& cell : cells) cell.clear();
+        for(auto* e : entities) {
+            int cx = int(e->getPosition().x / cellSize);
+            int cy = int(e->getPosition().y / cellSize);
+            if(cx >= 0 && cy >= 0 && cx < cols && cy < rows)
+                cells[toIndex(cx, cy)].push_back(e);
+        }
     }
-};
 
-class SpatialHash{
-    private:
-        float cellSize;
-        std::unordered_map <CellKey, std::vector<Entity*>, CellKeyhash> grid;
-    public:
-        SpatialHash(float c) : cellSize(c) {}
+    void queryNearby(Vec2 pos, std::vector<Entity*>& result) const {
+        result.clear();
+        result.reserve(32);
 
-        CellKey cellOf(Vec2 pos){
-            return CellKey{int(pos.x/cellSize), int(pos.y/cellSize)};
-        }
-
-        void insert(Entity* e){
-            CellKey c = cellOf(e->getPosition());
-            grid[c].push_back(e);
-        }
-
-        std::vector<Entity*> queryNearby(Vec2 pos){
-            CellKey c = cellOf(pos);
-            std::vector<Entity*> res;
-
-            for(int dx=-1; dx<=1; dx++){
-                for(int dy=-1; dy<=1; dy++){
-                    if(grid.find(CellKey{c.x+dx, c.y+dy})!=grid.end()){
-                        auto& cell = grid[CellKey{c.x+dx, c.y+dy}];
-                        res.insert(res.end(), cell.begin(), cell.end());
-                    }
-                }
-            }
-            return res;
-        }
-
-        void rebuild(std::vector<Entity*> &entities){
-            grid.clear();
-            for(auto it : entities){
-                insert(it);
+        int cx = int(pos.x / cellSize);
+        int cy = int(pos.y / cellSize);
+        for(int dx = -1; dx <= 1; dx++) {
+            for(int dy = -1; dy <= 1; dy++) {
+                int nx = cx + dx;
+                int ny = cy + dy;
+                if(nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+                for(auto* e : cells[toIndex(nx, ny)])
+                    result.push_back(e);
             }
         }
+    }
 };
 #endif
-
