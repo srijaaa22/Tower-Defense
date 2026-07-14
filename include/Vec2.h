@@ -26,7 +26,7 @@ struct Vec2 {
         return len;
     }
 
-    Vec2 normalised() const{
+    Vec2 normalized() const{
         float div = length();
         return {x/div, y/div};
     }

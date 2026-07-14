@@ -1,48 +1,63 @@
 #ifndef PATHFINDING_H
 #define PATHFINDING_H
+#include <iostream>
 #include <vector>
 #include <queue>
 #include <algorithm>
 #include <unordered_map>
-#include <unordered_set>
 #include "Vec2.h"
 #include "Grid.h"
 
-struct Vec2hash{
-    size_t operator()(const Vec2 &k) const {
-        return std::hash<float>()(k.x) ^ (std::hash<float>()(k.y) << 1);
-    }
-};
+std::vector<Vec2> bfs(Vec2 start, Vec2 goal, const Grid& grid) {
+    int rows = grid.getRows();
+    int cols = grid.getCols();
 
-std::vector<Vec2>bfs(Vec2 start, Vec2 goal, const Grid &grid){
+    auto toKey = [cols](int x, int y) { return y * cols + x; };
+
+    std::vector<std::vector<bool>> vis(rows, std::vector<bool>(cols, false));
+    std::unordered_map<int, int> cameFrom;
     std::queue<Vec2> q;
-    std::unordered_set<Vec2, Vec2hash> vis;
-    std::unordered_map<Vec2, Vec2, Vec2hash> cameFrom;
+
+    int sx = int(start.x), sy = int(start.y);
+    int gx = int(goal.x),  gy = int(goal.y);
 
     q.push(start);
-    vis.insert(start);
+    vis[sy][sx] = true;
 
-    while(!q.empty()){
-        Vec2 node = q.front();  
+    std::vector<int> dx = {0,-1,0,1};
+    std::vector<int> dy= {-1,0,1,0};
+
+    bool found = false;
+    while (!q.empty()) {
+        Vec2 node = q.front();
         q.pop();
-        if(node==goal) break;
-        std::vector<int> dx = {-1, 0, 1, 0};
-        std::vector<int> dy = {0, -1, 0, 1};
-        for(int i=0; i<4; i++){
-            Vec2 neighbour = node + Vec2(dx[i], dy[i]);
-            if(grid.isWalkable(int(neighbour.x), int(neighbour.y)) && vis.find(neighbour) == vis.end()){
-                vis.insert(neighbour);
-                cameFrom[neighbour] = node;
-                q.push(neighbour);
-            }
+
+        int nx = int(node.x), ny = int(node.y);
+        if (nx == gx && ny == gy) { found = true; break; }
+
+        for (int i = 0; i < 4; i++) {
+            int nnx = nx + dx[i];
+            int nny = ny + dy[i];
+
+            if (nnx < 0 || nny < 0 || nnx >= cols || nny >= rows) continue;
+            if (!grid.isWalkable(nnx, nny)) continue;
+            if (vis[nny][nnx]) continue;
+
+            vis[nny][nnx] = true;
+            cameFrom[toKey(nnx, nny)] = toKey(nx, ny);
+            q.push(Vec2(nnx, nny));
         }
     }
 
+    if (!found) return {};
+
     std::vector<Vec2> path;
-    Vec2 step = goal;
-    while(!(step == start)){
-        path.push_back(step);
-        step = cameFrom[step];
+    int cx = gx, cy = gy;
+    while (cx != sx || cy != sy) {
+        path.push_back(Vec2(cx, cy));
+        int key = cameFrom[toKey(cx, cy)];
+        cx = key % cols;
+        cy = key / cols;
     }
     std::reverse(path.begin(), path.end());
     return path;
