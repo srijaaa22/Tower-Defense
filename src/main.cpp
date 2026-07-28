@@ -4,6 +4,7 @@
 #include <ctime>
 #include <SDL2/SDL.h>
 #include <vector>
+#include <fstream>
 #include "Vec2.h"
 #include "Enemy.h"
 #include "Tower.h"
@@ -185,6 +186,10 @@ int main(int argc, char* argv[]) {
     if(naiveFrames > 0)
         std::cout << "Naive avg: " << naiveTotal/naiveFrames << " ms/frame over " << naiveFrames << " frames" << std::endl;
 
+    std::ofstream f("stats.json");
+    f << "{\"score\":" << 0 << ",\"waves\":" << 0 << "}";
+    f.close();
+    
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
