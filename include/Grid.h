@@ -14,9 +14,8 @@ class Grid{
             if(grid[y][x]) return true;
             else return false;
         }
-        void setBlocked(int x, int y){
-            grid[y][x]=false;
-        }
+        void setBlocked(int x, int y){ grid[y][x]=false; }
+        void setWalkable(int x, int y){ grid[y][x]=true; }
         int getRows() const { return row; }
         int getCols() const { return col; }
 };

@@ -13,6 +13,7 @@ class Enemy : public Entity{
         int pathIndex = 0;
         bool active = true;
         bool pathAssigned = false;
+        bool reachedGoalFlag = false;
 
     public:
         Enemy(Vec2 p, Vec2 s, Vec2 v, float sp, float h): Entity(p,s), velocity(v), speed(sp), health(h) {}
@@ -21,12 +22,16 @@ class Enemy : public Entity{
             path = p;
             pathIndex = 0;
             active = true;
-            pathAssigned = true;
+            reachedGoalFlag = false;
+            if(!p.empty()) pathAssigned = true;
         }
         
         virtual void update(float dt){
             if(path.empty() || pathIndex >= (int)path.size()){
-                active = false;
+                if(active){
+                    reachedGoalFlag = true;
+                    active = false;
+                }
                 return;
             }
 
@@ -41,12 +46,10 @@ class Enemy : public Entity{
             }
         }
 
-        bool isActive() const { 
-            return active; 
-        }
-        bool hasPath() const { 
-            return pathAssigned; 
-        }
+        bool isActive() const { return active; }
+        bool hasPath() const { return pathAssigned; }
+        bool reachedGoal() const { return reachedGoalFlag; }
+        void clearReachedGoal() { reachedGoalFlag = false; }
 
         virtual void render(SDL_Renderer* renderer){
             SDL_SetRenderDrawColor(renderer, 240, 235, 220, 255);

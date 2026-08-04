@@ -6,3 +6,7 @@ build/
 *.pdb
 CMakeSettings.json
 out/
+node_modules/
+backend/venv/
+stats.json
+backend/game.db
