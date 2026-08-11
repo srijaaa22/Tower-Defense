@@ -9,4 +9,5 @@ out/
 node_modules/
 backend/venv/
 stats.json
+bench.csv
 backend/game.db
