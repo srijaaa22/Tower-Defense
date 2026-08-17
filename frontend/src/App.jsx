@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+function formatTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
+}
+
 function App() {
   const [scores, setScores] = useState([])
 
@@ -18,8 +24,8 @@ function App() {
           <tr>
             <th>#</th>
             <th>Player</th>
-            <th>Score</th>
-            <th>Waves</th>
+            <th>Time Survived</th>
+            <th>Won</th>
           </tr>
         </thead>
         <tbody>
@@ -27,8 +33,8 @@ function App() {
             <tr key={i}>
               <td>{i + 1}</td>
               <td>{s.player}</td>
-              <td>{s.score}</td>
-              <td>{s.waves}</td>
+              <td>{formatTime(s.score)}</td>
+              <td>{s.gameWon ? "Yes": "No"}</td>
             </tr>
           ))}
         </tbody>

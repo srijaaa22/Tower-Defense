@@ -393,7 +393,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Naive avg: " << naiveTotal/naiveFrames << " ms/frame over " << naiveFrames << " frames" << std::endl;
 
     std::ofstream f("stats.json");
-    f << "{\"score\":" << totalScore/60 << ",\"waves\":1}";
+    f << "{\"score\":" << totalScore/60 << ",\"gameWon\":" << (gameWon ? "true" : "false") << "}";
     f.close();
     benchLog.close();
 
